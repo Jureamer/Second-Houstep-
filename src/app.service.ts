@@ -55,11 +55,22 @@ export class AppService {
       const order = new Order();
 
       order.customerId = data[orderColumnInfo[0]];
-      order.orderDate = new Date(data[orderColumnInfo[1]]);
+      order.orderDate = new Date(
+        this.excelSerialDateToJSDate(data[orderColumnInfo[1]]),
+      );
       order.orderType = data[orderColumnInfo[2]];
       order.orderAmount = data[orderColumnInfo[3]];
 
       await this.orderRepository.save(order);
     }
+  }
+
+  private excelSerialDateToJSDate(excelSerialDate) {
+    const daysBeforeUnixEpoch = 70 * 365 + 19;
+    const hour = 60 * 60 * 1000;
+    return new Date(
+      Math.round((excelSerialDate - daysBeforeUnixEpoch) * 24 * hour) +
+        12 * hour,
+    );
   }
 }
