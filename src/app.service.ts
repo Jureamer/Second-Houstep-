@@ -38,28 +38,26 @@ export class AppService {
   }
 
   private async saveCustomers(customersData: any[]): Promise<void> {
-    const customerColumnInfo = ['고객 id', '고객명', '고객등급'];
     for (const data of customersData) {
       const customer = new Customer();
-      customer.id = data[customerColumnInfo[0]];
-      customer.name = data[customerColumnInfo[1]];
-      customer.grade = data[customerColumnInfo[2]];
+      customer.id = data[this.customerColumnInfo[0]];
+      customer.name = data[this.customerColumnInfo[1]];
+      customer.grade = data[this.customerColumnInfo[2]];
 
       await this.customerRepository.save(customer);
     }
   }
 
   private async saveOrders(ordersData: any[]): Promise<void> {
-    const orderColumnInfo = ['주문고객 id', '주문일자', '주문타입', '주문금액'];
     for (const data of ordersData) {
       const order = new Order();
 
-      order.customerId = data[orderColumnInfo[0]];
+      order.customerId = data[this.orderColumnInfo[0]];
       order.orderDate = new Date(
-        this.excelSerialDateToJSDate(data[orderColumnInfo[1]]),
+        this.excelSerialDateToJSDate(data[this.orderColumnInfo[1]]),
       );
-      order.orderType = data[orderColumnInfo[2]];
-      order.orderAmount = data[orderColumnInfo[3]];
+      order.orderType = data[this.orderColumnInfo[2]];
+      order.orderAmount = data[this.orderColumnInfo[3]];
 
       await this.orderRepository.save(order);
     }

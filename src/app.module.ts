@@ -16,7 +16,7 @@ import { Customer } from './customer/entities/customer.entity';
       entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: true,
       logging: true,
-      // dropSchema: true,
+      dropSchema: true,
     }),
     CustomerModule,
     OrderModule,

@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from './entities/order.entity';
-import { Between, Repository } from 'typeorm';
+import { Between, FindOptionsWhere, Repository } from 'typeorm';
+import { GetOrdersDto } from './dto/getOrdersDto';
 
 @Injectable()
 export class OrderService {
@@ -9,6 +10,44 @@ export class OrderService {
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
   ) {}
+
+  async getOrders(query: GetOrdersDto): Promise<Order[]> {
+    const where: FindOptionsWhere<Order> = {};
+    const pageSize = query.pageSize || 50;
+    const pageNo = query.pageNo || 1;
+    const skipAmount: number = (pageNo - 1) * pageSize;
+
+    console.log(`query: ${JSON.stringify(query)}`);
+
+    if (query.startDate !== undefined && query.endDate !== undefined) {
+      console.log('일자 검색 조건이 있습니다.');
+      where.orderDate = Between(
+        new Date(query.startDate),
+        new Date(query.endDate),
+      );
+    }
+
+    if (query.orderType !== undefined) {
+      console.log('주문/반품 검색 조건이 있습니다.');
+      where.orderType = query.orderType === 0 ? 'order' : 'refund';
+    }
+
+    if (query.customerId !== undefined) {
+      console.log('고객 검색 조건이 있습니다.');
+      where.customerId = query.customerId;
+    }
+
+    return this.orderRepository.find({
+      where,
+      relations: ['customer'],
+      order: {
+        orderDate: 'DESC',
+      },
+      take: query.pageSize,
+      skip: skipAmount,
+    });
+  }
+
   async getMonthlySales(): Promise<any> {
     const statistics = [];
     for (let year = 2023; year <= 2024; year++) {
