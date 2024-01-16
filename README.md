@@ -37,11 +37,13 @@ ALTER TABLE `order` ADD FOREIGN KEY (`customer_id`) REFERENCES `customer` (`id`)
 # API
 
 ```bash
-# 고객정보 및 주문내역정보 업로드 API
-1. POST /upload
-form-data: file
+# 1.고객정보 및 주문내역정보 업로드 API
+- POST /upload
+- form-data: file
 
-# 월별 매출 통계 조회 API
+# 2. 월별 매출 통계 조회 API
+- GET /order/monthly-sales
 
-# 주문 목록 조회 API
+# 3. 주문 목록 조회 API
+- GET /order?customerId={고객번호}&startDate={시작일자}&endDate={종료일자}&orderType={주문유형}&pageSize={페이지크기}&pageNo={페이지번호}
 ```
